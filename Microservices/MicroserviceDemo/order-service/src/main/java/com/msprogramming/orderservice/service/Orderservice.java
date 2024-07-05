@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +32,7 @@ public class Orderservice {
     public List<OrderResponseDTO> getAllOrders(){
         ModelMapper mapper = new ModelMapper();
         List<Order> orderList = repo.findAll();
+        orderList.stream().filter( i -> i.getId() == 20).sorted(Comparator.comparing( ));
         return orderList.stream().map(p -> mapper.map(p, OrderResponseDTO.class) ).toList();
     }
     public List<OrderResponseDTO> getOrderByOrderNumber(String ordernumber){

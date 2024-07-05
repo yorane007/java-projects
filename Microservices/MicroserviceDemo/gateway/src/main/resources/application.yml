@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: edge-service
+  data:
+    redis:
+      host: 10.0.0.160
+      port: 6379
+  cloud:
+    gateway:
+        routes:
+          - id: inventory-service
+            uri: http://localhost:8082
+            predicates:
+              - Path=/inventory/**
+            filters:
+              - PrefixPath=/api
+              - name: CircuitBreaker
+                args:
+                  name: myCircuitBreaker
+                  fallbackUri: /inCaseOfFailureUseThis
+                  statusCodes:
+                    - 500
+              - name: RequestRateLimiter
+                args:
+                    redis-rate-limiter.replenishRate: 1
+                    redis-rate-limiter.burstCapacity: 2
+                    redis-rate-limiter.requestedTokens: 1
+                    deny-empty-key: false
+#                    key-resolver: "#{@userKeyResolver}"
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: https://my-auth-server.com
+  main:
+    web-application-type: reactive
+server:
+  port: 8087
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+logging:
+  level:
+    org.springframework.cloud: DEBUG

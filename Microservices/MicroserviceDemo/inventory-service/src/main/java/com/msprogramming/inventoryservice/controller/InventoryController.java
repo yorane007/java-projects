@@ -22,7 +22,11 @@ public class InventoryController {
     @GetMapping("/{skuCode}")
     @ResponseStatus(HttpStatus.OK)
     public InventoryResponseDTO getInventory(@PathVariable String skuCode){
-        return service.getInventory(skuCode);
+        InventoryResponseDTO responseDto = service.getInventory(skuCode);
+        if(  responseDto == null){
+            responseDto = new InventoryResponseDTO(0L,skuCode,0L);
+        }
+        return responseDto;
     }
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
